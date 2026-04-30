@@ -5,7 +5,9 @@ import PhotosList from "../context/photos/components/photos-list";
 export default function PageHome() {
     return (
         <Container>
-            <AlbumsFilter albums={[]} className="mb-9" />
+            <AlbumsFilter albums={[
+                {id: "12093", title: "Album 1"}
+            ]} className="mb-9" />
             <PhotosList
                 photos={[
                     {
@@ -13,8 +15,8 @@ export default function PageHome() {
                         title: "olaMundi",
                         imageId: "portrait-tower.png",
                         albums: [{
-                            id: "321",
-                            title: "album1"
+                            id: "12093",
+                            title: "Album 1"
                         }]
                     }
                 ]}
