@@ -21,7 +21,7 @@ export default function ImagePreview({
     ...props
 }: ImagePreviewProps) {
     return (
-        <div className={imagePreviewVariants(className)}>
+        <div className={imagePreviewVariants({className})}>
             <img
                 className={imagePreviewImageVariants({className: imageClassName})}
                 {...props}
