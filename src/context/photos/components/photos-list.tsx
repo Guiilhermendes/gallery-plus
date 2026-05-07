@@ -1,17 +1,15 @@
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
+import usePhotos from "../hooks/use-photos";
 import type { Photo } from "../models/photo"
 import PhotoWidget from "./photo-widget";
 
-interface PhotosListProps {
-    photos: Photo[];
-    loading?: boolean
-};
+export default function PhotosList() {
+    const { 
+        photos,
+        isLoadingPhotos: loading
+    } = usePhotos();
 
-export default function PhotosList({
-    photos,
-    loading
-}: PhotosListProps) {
     return (
         <div className="space-y-6">
             <Text
