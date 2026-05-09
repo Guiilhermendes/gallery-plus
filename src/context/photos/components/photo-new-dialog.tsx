@@ -1,12 +1,12 @@
 import type React from "react";
 import {
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
+    Dialog,
+    DialogBody,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTrigger,
 } from "../../../components/dialog";
 import Button from "../../../components/button";
 import InputText from "../../../components/input-text";
@@ -17,72 +17,100 @@ import Text from "../../../components/text";
 import Skeleton from "../../../components/skeleton";
 import { useForm } from "react-hook-form";
 import useAlbums from "../../albums/hooks/use-albums";
+import { photoNewFormSchema, type PhotoNewFormSchema } from "../schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 
 interface PhotoNewDialogProps {
-  trigger: React.ReactNode;
+    trigger: React.ReactNode;
 }
 
 export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
-  const form = useForm();
-  const { albums, isLoadingAlbums } = useAlbums();
+    const [modalOpen, setModalOpen] = useState(false);
+    const form = useForm<PhotoNewFormSchema>({
+        resolver: zodResolver(photoNewFormSchema)
+    });
+    const { albums, isLoadingAlbums } = useAlbums();
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>Adicionar foto</DialogHeader>
+    const file = form.watch("file");
+    const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
 
-        <DialogBody className="flex flex-col gap-5">
-          <InputText placeholder="Adicione um título" maxLength={255} />
+    useEffect(() => {
+        if(!modalOpen) {
+            form.reset();
+        }
+    }, [modalOpen, form])
 
-          <Alert>
-            Tamanho máximo: 50MB
-            <br />
-            Você pode selecionar arquivo em PNG, JPG ou JPEG
-          </Alert>
+    function handleSubmit(payload: PhotoNewFormSchema) {
+        console.log({ payload })
+    }
 
-          <InputSingleFile
-            form={form}
-            allowedExtensions={["png", "jpg", "jpeg"]}
-            maxFileSizeInMB={50}
-            replaceBy={<ImagePreview className="w-full h-56" />}
-          />
+    return (
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <DialogTrigger asChild>{trigger}</DialogTrigger>
+            <DialogContent>
+                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                    <DialogHeader>Adicionar foto</DialogHeader>
 
-          <div className="space-y-3">
-            <Text variant="label-small">Selecionar álbuns</Text>
+                    <DialogBody className="flex flex-col gap-5">
+                        <InputText
+                            placeholder="Adicione um título"
+                            maxLength={255}
+                            error={form.formState.errors.title?.message}
+                            {...form.register("title")}
+                        />
 
-            <div className="flex flex-wrap gap-3">
-              {!isLoadingAlbums &&
-                albums.length > 0 &&
-                albums.map((album) => (
-                  <Button
-                    key={album.id}
-                    variant="ghost"
-                    size="sm"
-                    className="truncate"
-                  >
-                    {album.title}
-                  </Button>
-                ))}
+                        <Alert>
+                            Tamanho máximo: 50MB
+                            <br />
+                            Você pode selecionar arquivo em PNG, JPG ou JPEG
+                        </Alert>
 
-              {isLoadingAlbums &&
-                Array.from({ length: 5 }).map((_, index) => (
-                  <Skeleton
-                    key={`album-loading-${index}`}
-                    className="w-20 h-7"
-                  />
-                ))}
-            </div>
-          </div>
-        </DialogBody>
+                        <InputSingleFile
+                            form={form}
+                            allowedExtensions={["png", "jpg", "jpeg"]}
+                            maxFileSizeInMB={50}
+                            replaceBy={<ImagePreview src={fileSource} className="w-full h-56" />}
+                            error={form.formState.errors.file?.message}
+                            {...form.register("file")}
+                        />
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary">Cancelar</Button>
-          </DialogClose>
-          <Button>Adicionar</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
+                        <div className="space-y-3">
+                            <Text variant="label-small">Selecionar álbuns</Text>
+
+                            <div className="flex flex-wrap gap-3">
+                                {!isLoadingAlbums &&
+                                    albums.length > 0 &&
+                                    albums.map((album) => (
+                                        <Button
+                                            key={album.id}
+                                            variant="ghost"
+                                            size="sm"
+                                            className="truncate"
+                                        >
+                                            {album.title}
+                                        </Button>
+                                    ))}
+
+                                {isLoadingAlbums &&
+                                    Array.from({ length: 5 }).map((_, index) => (
+                                        <Skeleton
+                                            key={`album-loading-${index}`}
+                                            className="w-20 h-7"
+                                        />
+                                    ))}
+                            </div>
+                        </div>
+                    </DialogBody>
+
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="secondary">Cancelar</Button>
+                        </DialogClose>
+                        <Button type="submit">Adicionar</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
 }
