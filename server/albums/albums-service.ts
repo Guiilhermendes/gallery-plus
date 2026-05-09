@@ -28,30 +28,27 @@ export class AlbumsService {
       title: albumData.title
     };
 
-    const db = await this.dbService.readDatabase();
-    db.albums.push(album);
-    await this.dbService.writeDatabase(db);
+    await this.dbService.updateDatabase((db) => {
+      db.albums.push(album);
+    });
 
     return album;
   }
 
   async deleteAlbum(id: string): Promise<boolean> {
-    const db = await this.dbService.readDatabase();
-    const albumIndex = db.albums.findIndex(album => album.id === id);
-    
-    if (albumIndex === -1) {
-      return false;
-    }
+    return await this.dbService.updateDatabase((db) => {
+      const albumIndex = db.albums.findIndex((album) => album.id === id);
 
-    // Remove album
-    db.albums.splice(albumIndex, 1);
-    
-    // Remove all photo relationships for this album
-    db.photosOnAlbums = db.photosOnAlbums.filter(
-      relation => relation.albumId !== id
-    );
-    
-    await this.dbService.writeDatabase(db);
-    return true;
+      if (albumIndex === -1) {
+        return false;
+      }
+
+      db.albums.splice(albumIndex, 1);
+      db.photosOnAlbums = db.photosOnAlbums.filter(
+        (relation) => relation.albumId !== id
+      );
+
+      return true;
+    });
   }
 } 

@@ -198,7 +198,7 @@ export async function photosRoutes(
 		}
 	});
 
-	// PUT /photos/:id/albums - manage photo albums (add/remove)
+	// PUT /photos/:id/albums - add photo to albums without removing existing links
 	fastify.put("/photos/:id/albums", async (request, reply) => {
 		try {
 			const paramsResult = photoParamsSchema.safeParse(request.params);
