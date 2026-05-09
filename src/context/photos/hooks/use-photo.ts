@@ -3,6 +3,7 @@ import { api, fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photo";
 import type { PhotoNewFormSchema } from "../schemas";
 import { toast } from "sonner";
+import usePhotoAlbums from "./use-photo-albums";
 
 interface PhotoDetailResponse extends Photo {
     nextPhotoId?: string;
@@ -16,6 +17,7 @@ export default function usePhoto(id?: string) {
         enabled: !!id
     });
     const queryClient = useQueryClient();
+    const { managePhotoOnAlbum } = usePhotoAlbums();
 
     async function createPhoto({title, file, albumsIds}: PhotoNewFormSchema) {
         try {
@@ -32,9 +34,7 @@ export default function usePhoto(id?: string) {
             });
 
             if (albumsIds && albumsIds.length > 0) {
-                await api.put(`/photos/${photo.id}/albums`, {
-                    albumsIds
-                });
+                await managePhotoOnAlbum(photo.id, albumsIds)
             }
 
             queryClient.invalidateQueries({queryKey: ["photos"]});

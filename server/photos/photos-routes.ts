@@ -6,7 +6,7 @@ import {
 	updatePhotoSchema,
 	photoParamsSchema,
 	photoQuerySchema,
-	managePhotoAlbumsSchema,
+	managePhotoOnAlbumsSchema,
 } from "./photos-interfaces.ts";
 import {MultipartFile} from "@fastify/multipart";
 
@@ -202,7 +202,7 @@ export async function photosRoutes(
 	fastify.put("/photos/:id/albums", async (request, reply) => {
 		try {
 			const paramsResult = photoParamsSchema.safeParse(request.params);
-			const bodyResult = managePhotoAlbumsSchema.safeParse(request.body);
+			const bodyResult = managePhotoOnAlbumsSchema.safeParse(request.body);
 
 			if (!paramsResult.success) {
 				reply.status(400).send({
@@ -221,7 +221,7 @@ export async function photosRoutes(
 			}
 
 			const {id} = paramsResult.data;
-			const success = await photosService.managePhotoAlbums(
+			const success = await photosService.managePhotoOnAlbums(
 				id,
 				bodyResult.data
 			);

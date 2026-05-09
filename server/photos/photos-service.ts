@@ -5,7 +5,7 @@ import {Album, Photo} from "../models.ts";
 import {
 	CreatePhotoRequest,
 	UpdatePhotoRequest,
-	ManagePhotoAlbumsRequest,
+	managePhotoOnAlbumsRequest,
 } from "./photos-interfaces.ts";
 
 export class PhotosService {
@@ -224,9 +224,9 @@ export class PhotosService {
 		});
 	}
 
-	async managePhotoAlbums(
+	async managePhotoOnAlbums(
 		photoId: string,
-		albumsData: ManagePhotoAlbumsRequest
+		albumsData: managePhotoOnAlbumsRequest
 	): Promise<boolean> {
 		return await this.dbService.updateDatabase((db) => {
 			const photoExists = db.photos.some((photo) => photo.id === photoId);

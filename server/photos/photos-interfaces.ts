@@ -19,7 +19,7 @@ export const photoQuerySchema = z.object({
 	q: z.string().optional(),
 });
 
-export const managePhotoAlbumsSchema = z.object({
+export const managePhotoOnAlbumsSchema = z.object({
 	albumsIds: z.array(z.string().uuid()),
 });
 
@@ -28,4 +28,4 @@ export type CreatePhotoRequest = z.infer<typeof createPhotoSchema>;
 export type UpdatePhotoRequest = z.infer<typeof updatePhotoSchema>;
 export type PhotoParams = z.infer<typeof photoParamsSchema>;
 export type PhotoQuery = z.infer<typeof photoQuerySchema>;
-export type ManagePhotoAlbumsRequest = z.infer<typeof managePhotoAlbumsSchema>;
+export type managePhotoOnAlbumsRequest = z.infer<typeof managePhotoOnAlbumsSchema>;

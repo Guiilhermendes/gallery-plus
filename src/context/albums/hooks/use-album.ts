@@ -3,9 +3,11 @@ import type { AlbumNewFormSchema } from "../schemas";
 import { api } from "../../../helpers/api";
 import type { Album } from "../models/album";
 import { useQueryClient } from "@tanstack/react-query";
+import usePhotoAlbums from "../../photos/hooks/use-photo-albums";
 
 export default function useAlbum() {
     const queryClient = useQueryClient();
+    const { managePhotoOnAlbum } = usePhotoAlbums();
 
     async function createAlbum({title, photosIds}: AlbumNewFormSchema) {
         try {
@@ -15,9 +17,7 @@ export default function useAlbum() {
             
             if (photosIds && photosIds.length > 0) {
                 await Promise.all(photosIds.map(photoId => {
-                    return api.put(`/photos/${photoId}/albums`, {
-                        albumsIds: [album.id]
-                    });
+                    return managePhotoOnAlbum(photoId, [album.id]);
                 }));
             }
 
